@@ -1,8 +1,6 @@
-import java.text.DecimalFormat;
-import java.util.Date;
 
 /**
- * Controller class that implements TSTController. To be used with TSTView1.
+ * Controller class that implements TSTController. To be used with TSTView2.
  * 
  * @author Thomas Clark
  */
@@ -31,25 +29,10 @@ public final class TETController1 implements TETController {
      */
     @Override
     public void updateViewToMatchModel() {
-        int smileCount = this.model.smileCount();
-        int frownCount = this.model.frownCount();
-        boolean happyOrSad = this.model.happyOrSad;
-        String happyOrSadString;
-        if (happyOrSad) {
-            happyOrSadString = "HAPPY :)";
-        } else {
-            happyOrSadString = "SAD :(";
-        }
-        Date startDate = this.model.date();
+        int leadingEmotion = this.model.leadingEmotion();
+        String emotionString = this.model.emotions.get(leadingEmotion);
 
-        DecimalFormat df = new DecimalFormat("#.###");
-        double smileToFrownRatio = (double) smileCount / frownCount;
-
-        String output = "Twitter is:  " + happyOrSadString
-                + "\nRecording Since:  " + startDate.toString()
-                + "\nSmile Count:  " + smileCount + "\nFrown Count:  "
-                + frownCount + "\nSmile to Frown Ratio:  "
-                + df.format(smileToFrownRatio);
+        String output = "\n   Twitter is:\n     " + emotionString;
 
         /*
          * Update the display
@@ -62,13 +45,6 @@ public final class TETController1 implements TETController {
      */
     @Override
     public void processResetEvent() {
-        /*
-         * Update model in response to this event
-         */
-        this.model.setSmileCount(0);
-        this.model.setFrownCount(0);
-        this.model.resetDate();
-        this.view.updateDisplay(this.model.date().toString()
-                + "\nSmile Count:  0\nFrown Count:  0");
+
     }
 }

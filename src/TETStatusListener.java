@@ -1,5 +1,3 @@
-import java.awt.Color;
-
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -13,13 +11,13 @@ import twitter4j.StatusListener;
 public final class TETStatusListener implements StatusListener {
 
     //Model
-    private final TETDataModel model;
+    TETDataModel model;
 
     //Controller
-    private final TETController controller;
+    TETController controller;
 
     //View
-    private final TETView view;
+    TETView view;
 
     /**
      * Default constructor.
@@ -35,40 +33,18 @@ public final class TETStatusListener implements StatusListener {
      * Function to tell if the input tweet (string) contains a smiley face
      * (happy). If it does not, it is assumed that it contains a frowny face.
      */
-    private static boolean isHappy(String input) {
-        boolean isHappy = false;
-        if (input.contains(new StringBuilder(":)"))
-                || input.contains(new StringBuilder("(:"))) {
-            isHappy = true;
+    public void incrementEmotion(String input) {
+        for (int i = 0; i < this.model.emotions.size(); i++) {
+            if (input.contains(this.model.emotions.get(i))) {
+                this.model.incrementCount(i);
+                return;
+            }
         }
-        return isHappy;
     }
 
     @Override
     public void onStatus(Status status) {
-        if (isHappy(status.getText())) {
-            this.model.incrementSmileCount();
-            this.model.recordHappyOrSad(true);
-        } else {
-            this.model.incrementFrownCount();
-            this.model.recordHappyOrSad(false);
-        }
-        if (this.model.tweetCounter() == 0) {
-            if (isHappy(status.getText())) {
-                this.view.tweetText().setText(
-                        "@" + status.getUser().getScreenName() + ":\n"
-                                + status.getText());
-                this.view.tweetText().setForeground(Color.WHITE);
-                this.view.tweetText().setBackground(Color.RED);
-            } else {
-                this.view.tweetText().setText(
-                        "@" + status.getUser().getScreenName() + ":\n"
-                                + status.getText());
-                this.view.tweetText().setForeground(Color.WHITE);
-                this.view.tweetText().setBackground(Color.BLUE);
-            }
-        }
-        this.model.incrementTweetCounter();
+        this.incrementEmotion(status.getText());
         this.controller.updateViewToMatchModel();
     }
 

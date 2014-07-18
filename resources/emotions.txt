@@ -1,0 +1,8 @@
+happy
+sad
+angry
+nervous
+scared
+loved
+surprised
+annoyed

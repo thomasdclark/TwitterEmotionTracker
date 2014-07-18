@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import twitter4j.FilterQuery;
 import twitter4j.StatusListener;
@@ -8,6 +9,9 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
+
+import components.simplereader.SimpleReader;
+import components.simplereader.SimpleReader1L;
 
 /**
  * Simple Twitter stream application that recieves a stream of tweets containing
@@ -28,9 +32,9 @@ public final class TETMain {
     /**
      * Take the file containing the OAuth information and turns it into a string
      */
-    public static String readOAuth(String filename) {
+    public static String readOAuth(String fileName) {
         String content = null;
-        File file = new File(filename); //for ex foo.txt
+        File file = new File(fileName); //for ex foo.txt
         try {
             FileReader reader = new FileReader(file);
             char[] chars = new char[(int) file.length()];
@@ -60,6 +64,20 @@ public final class TETMain {
             }
         }
         return oAuth;
+    }
+
+    /**
+     * Takes the string containing the files content and extracts oAuth
+     * information
+     */
+    public static ArrayList<String> getEmotions(String fileName) {
+        ArrayList<String> emotions = new ArrayList<String>();
+        SimpleReader in = new SimpleReader1L(fileName);
+        while (!in.atEOS()) {
+            emotions.add(in.nextLine());
+        }
+        in.close();
+        return emotions;
     }
 
     /**
@@ -94,18 +112,14 @@ public final class TETMain {
         TETDataModel model = new TETDataModel();
 
         /*
-         * Decide which view to use. Both have different displays but show the
-         * same information
+         * Create view
          */
-        //TETView view = new TETView1();
-        TETView view = new TETView2();
+        TETView view = new TETView1();
 
         /*
-         * Decide which controller to use. TSTController1 should be used with
-         * TSTView1 and TSTController2 should be used with TSTView2
+         * Create controller
          */
-        //TETController controller = new TETController1(model, view);
-        TETController controller = new TETController2(model, view);
+        TETController controller = new TETController1(model, view);
 
         //Register observer in view
         view.registerObserver(controller);
@@ -115,7 +129,12 @@ public final class TETMain {
 
         //Tell stream what tweets to filter for
         FilterQuery fq = new FilterQuery();
-        String keywords[] = { ":)", ":(", "(:", "):" };
+        String emotionsFile = "resources/emotions.txt";
+        ArrayList<String> emotions = getEmotions(emotionsFile);
+        String keywords[] = new String[emotions.size()];
+        for (int i = 0; i < emotions.size(); i++) {
+            keywords[i] = emotions.get(i);
+        }
         fq.track(keywords);
 
         twitterStream.addListener(listener);

@@ -1,15 +1,14 @@
-import java.awt.Cursor;
-import java.awt.GridLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 
-import javax.swing.JButton;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
- * View class that implements TSTView. To be used with TSTController1.
+ * View class that implements TSTView. To be used with TSTController2.
  * 
  * @author Thomas Clark
  */
@@ -23,20 +22,14 @@ public final class TETView1 extends JFrame implements TETView {
     /**
      * Constants
      */
-    private static final int LINES_IN_TEXT_AREAS = 5,
-            LINE_LENGTHS_IN_TEXT_AREAS = 30, ROWS_IN_BUTTON_PANEL_GRID = 1,
-            COLUMNS_IN_BUTTON_PANEL_GRID = 1, ROWS_IN_THIS_GRID = 2,
+    private static final int LINES_IN_DISPLAY_TEXT = 4,
+            LINE_LENGTHS_IN_DISPLAY_TEXT = 8, ROWS_IN_THIS_GRID = 1,
             COLUMNS_IN_THIS_GRID = 1;
 
     /**
      * Text areas.
      */
     private final JTextArea displayText;
-
-    /**
-     * Buttons.
-     */
-    private final JButton resetButton;
 
     /**
      * Default constructor.
@@ -46,14 +39,21 @@ public final class TETView1 extends JFrame implements TETView {
         /*
          * Call JFrame superclass with title
          */
-        super("Twitter Smile Tracker");
+        super("Twitter Emotion Tracker");
 
         /*
          * Create widgets
          */
-        this.displayText = new JTextArea("", LINES_IN_TEXT_AREAS,
-                LINE_LENGTHS_IN_TEXT_AREAS);
-        this.resetButton = new JButton("Reset");
+        this.displayText = new JTextArea("", LINES_IN_DISPLAY_TEXT,
+                LINE_LENGTHS_IN_DISPLAY_TEXT);
+
+        /*
+         * Customize font of text
+         */
+        Font textFont = new Font("TimeRoman", Font.BOLD, 30);
+        this.displayText.setFont(textFont);
+        this.displayText.setForeground(Color.BLACK);
+        this.displayText.setBackground(Color.WHITE);
 
         /*
          * Text areas should wrap lines, and outputText should be read-only
@@ -68,31 +68,14 @@ public final class TETView1 extends JFrame implements TETView {
         JScrollPane displayTextScrollPane = new JScrollPane(this.displayText);
 
         /*
-         * Create button panel organized using grid layout
+         * Organize main window by setting layout
          */
-        JPanel buttonPanel = new JPanel(new GridLayout(
-                ROWS_IN_BUTTON_PANEL_GRID, COLUMNS_IN_BUTTON_PANEL_GRID));
-
-        /*
-         * Add buttons to the button panel
-         */
-        buttonPanel.add(this.resetButton);
-
-        /*
-         * Organize main window using grid layout
-         */
-        this.setLayout(new GridLayout(ROWS_IN_THIS_GRID, COLUMNS_IN_THIS_GRID));
+        this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
 
         /*
          * Add scroll panes and button panel to main window
          */
         this.add(displayTextScrollPane);
-        this.add(buttonPanel);
-
-        /*
-         * Register this object as the observer for all GUI events
-         */
-        this.resetButton.addActionListener(this);
 
         /*
          * Start the main application window
@@ -118,25 +101,12 @@ public final class TETView1 extends JFrame implements TETView {
         this.displayText.setText(output);
     }
 
+    /**
+     * This view has no buttons so no need to implement actionPerformed
+     */
     @Override
-    public void actionPerformed(ActionEvent event) {
-        /*
-         * Set cursor to indicate computation on-going
-         */
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    public void actionPerformed(ActionEvent e) {
 
-        /*
-         * Determine which event has occurred
-         */
-        Object source = event.getSource();
-        if (source == this.resetButton) {
-            this.controller.processResetEvent();
-        }
-
-        /*
-         * Set the cursor back to normal
-         */
-        this.setCursor(Cursor.getDefaultCursor());
     }
 
     /**
@@ -145,13 +115,5 @@ public final class TETView1 extends JFrame implements TETView {
     @Override
     public JTextArea displayText() {
         return this.displayText;
-    }
-
-    /**
-     * Returns the tweetText JTextArea
-     */
-    @Override
-    public JTextArea tweetText() {
-        return null;
     }
 }
