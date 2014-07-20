@@ -34,7 +34,7 @@ public final class TETDataModel {
     /**
      * The number of tweets that the tweetCount resets at
      */
-    final int tweetNumber = 100;
+    final int tweetNumber = 30;
 
     /**
      * Default constructor.
@@ -92,8 +92,7 @@ public final class TETDataModel {
      * Increases this.counts[i] by one.
      */
     public void incrementCount(int i) {
-        int current = this.counts.get(i);
-        int future = current++;
+        int future = this.counts.get(i) + 1;
         this.counts.set(i, future);
         this.tweetCount++;
         if (this.tweetCount > this.tweetNumber) {
