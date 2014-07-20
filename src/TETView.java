@@ -27,4 +27,9 @@ public interface TETView extends ActionListener {
      */
     JTextArea displayText();
 
+    /**
+     * Returns the tweetText JTextArea
+     */
+    JTextArea tweetText();
+
 }

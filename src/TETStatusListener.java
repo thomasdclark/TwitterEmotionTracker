@@ -30,21 +30,31 @@ public final class TETStatusListener implements StatusListener {
     }
 
     /**
-     * Function to tell if the input tweet (string) contains a smiley face
-     * (happy). If it does not, it is assumed that it contains a frowny face.
+     * Function to tell which emotion was tweeted and increment that emotion in
+     * the data model. Also returns the index of the emotion in the array that
+     * the emotions are held in.
      */
-    public void incrementEmotion(String input) {
+    public int incrementEmotion(String input) {
+        int emotionIndex = 0;
         for (int i = 0; i < this.model.emotions.size(); i++) {
             if (input.contains(this.model.emotions.get(i))) {
                 this.model.incrementCount(i);
-                return;
+                return i;
             }
         }
+        return emotionIndex;
     }
 
     @Override
     public void onStatus(Status status) {
-        this.incrementEmotion(status.getText());
+        int emotionIndex = this.incrementEmotion(status.getText());
+        if ((this.model.tweetCount() - 1) % 25 == 0) {
+            this.view.tweetText().setText(
+                    "@" + status.getUser().getScreenName() + ":\n"
+                            + status.getText());
+            this.view.tweetText().setBackground(
+                    this.model.colors.get(emotionIndex));
+        }
         this.controller.updateViewToMatchModel();
     }
 

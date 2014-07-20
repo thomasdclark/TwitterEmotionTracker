@@ -74,7 +74,21 @@ public final class TETMain {
         ArrayList<String> emotions = new ArrayList<String>();
         SimpleReader in = new SimpleReader1L(fileName);
         while (!in.atEOS()) {
-            emotions.add(in.nextLine());
+            String line = in.nextLine();
+            String emotion = "";
+            String color = "";
+            boolean emotionOrColor = false;
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (c == ' ') {
+                    emotionOrColor = true;
+                } else if (!emotionOrColor) {
+                    emotion = emotion + Character.toString(c);
+                } else {
+                    color = color + Character.toString(c);
+                }
+            }
+            emotions.add(emotion);
         }
         in.close();
         return emotions;

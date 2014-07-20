@@ -23,13 +23,15 @@ public final class TETView1 extends JFrame implements TETView {
      * Constants
      */
     private static final int LINES_IN_DISPLAY_TEXT = 4,
-            LINE_LENGTHS_IN_DISPLAY_TEXT = 8, ROWS_IN_THIS_GRID = 1,
-            COLUMNS_IN_THIS_GRID = 1;
+            LINE_LENGTHS_IN_DISPLAY_TEXT = 8, LINES_IN_TWEET_TEXT = 5,
+            LINE_LENGTHS_IN_TWEET_TEXT = 8;
 
     /**
      * Text areas.
      */
     private final JTextArea displayText;
+
+    private final JTextArea tweetText;
 
     /**
      * Default constructor.
@@ -47,6 +49,9 @@ public final class TETView1 extends JFrame implements TETView {
         this.displayText = new JTextArea("", LINES_IN_DISPLAY_TEXT,
                 LINE_LENGTHS_IN_DISPLAY_TEXT);
 
+        this.tweetText = new JTextArea("", LINES_IN_TWEET_TEXT,
+                LINE_LENGTHS_IN_TWEET_TEXT);
+
         /*
          * Customize font of text
          */
@@ -56,16 +61,28 @@ public final class TETView1 extends JFrame implements TETView {
         this.displayText.setBackground(Color.WHITE);
 
         /*
+         * Customize font of tweet
+         */
+        Font tweetFont = new Font("TimeRoman", Font.BOLD, 12);
+        this.tweetText.setFont(tweetFont);
+        this.tweetText.setForeground(Color.WHITE);
+        this.tweetText.setBackground(Color.WHITE);
+
+        /*
          * Text areas should wrap lines, and outputText should be read-only
          */
         this.displayText.setEditable(false);
         this.displayText.setLineWrap(true);
         this.displayText.setWrapStyleWord(true);
+        this.tweetText.setEditable(false);
+        this.tweetText.setLineWrap(true);
+        this.tweetText.setWrapStyleWord(true);
 
         /*
          * Create scroll panes for the text areas
          */
         JScrollPane displayTextScrollPane = new JScrollPane(this.displayText);
+        JScrollPane tweetTextScrollPane = new JScrollPane(this.tweetText);
 
         /*
          * Organize main window by setting layout
@@ -76,6 +93,7 @@ public final class TETView1 extends JFrame implements TETView {
          * Add scroll panes and button panel to main window
          */
         this.add(displayTextScrollPane);
+        this.add(tweetTextScrollPane);
 
         /*
          * Start the main application window
@@ -115,5 +133,13 @@ public final class TETView1 extends JFrame implements TETView {
     @Override
     public JTextArea displayText() {
         return this.displayText;
+    }
+
+    /**
+     * Returns the tweetText JTextArea
+     */
+    @Override
+    public JTextArea tweetText() {
+        return this.tweetText;
     }
 }
