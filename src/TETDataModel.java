@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.ArrayList;
 
 import components.simplereader.SimpleReader;
@@ -14,6 +15,11 @@ public final class TETDataModel {
      * The array of emotions
      */
     ArrayList<String> emotions;
+
+    /**
+     * An array to hold the background color for each emotion
+     */
+    ArrayList<Color> colors;
 
     /**
      * An array to count how many times each emotion was tweeted
@@ -37,7 +43,9 @@ public final class TETDataModel {
         /*
          * Initialize model
          */
-        this.emotions = getEmotions("resources/emotions.txt");
+        ArrayList<ArrayList> array = getEmotionsAndColors("resources/emotions.txt");
+        this.emotions = array.get(0);
+        this.colors = array.get(1);
         this.counts = new ArrayList<Integer>();
         for (int i = 0; i < this.emotions.size(); i++) {
             this.counts.add(0);
@@ -49,14 +57,35 @@ public final class TETDataModel {
      * Takes the string containing the files content and extracts oAuth
      * information
      */
-    public static ArrayList<String> getEmotions(String fileName) {
+    public static ArrayList<ArrayList> getEmotionsAndColors(String fileName) {
+        ArrayList<ArrayList> array = new ArrayList<ArrayList>();
         ArrayList<String> emotions = new ArrayList<String>();
+        ArrayList<String> colorStrings = new ArrayList<String>();
+        ArrayList<Color> colors = new ArrayList<Color>();
         SimpleReader in = new SimpleReader1L(fileName);
         while (!in.atEOS()) {
-            emotions.add(in.nextLine());
+            String line = in.nextLine();
+            String emotion = "";
+            String color = "";
+            boolean emotionOrColor = false;
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (c == ' ') {
+                    emotionOrColor = true;
+                } else if (!emotionOrColor) {
+                    emotion = emotion + Character.toString(c);
+                } else {
+                    color = color + Character.toString(c);
+                }
+            }
+            emotions.add(emotion);
+            colorStrings.add(color);
         }
         in.close();
-        return emotions;
+        colors = setColors(colorStrings);
+        array.add(emotions);
+        array.add(colors);
+        return array;
     }
 
     /**
@@ -88,6 +117,61 @@ public final class TETDataModel {
             }
         }
         return leadingEmotion;
+    }
+
+    /**
+     * Sets the background color for each emotion
+     */
+    public static ArrayList<Color> setColors(ArrayList<String> strings) {
+        ArrayList<Color> colors = new ArrayList<Color>();
+        for (int i = 0; i < strings.size(); i++) {
+            String color = strings.get(i);
+            switch (color) {
+                case "black":
+                    colors.add(Color.black);
+                    break;
+                case "blue":
+                    colors.add(Color.blue);
+                    break;
+                case "cyan":
+                    colors.add(Color.cyan);
+                    break;
+                case "darkGray":
+                    colors.add(Color.darkGray);
+                    break;
+                case "gray":
+                    colors.add(Color.gray);
+                    break;
+                case "green":
+                    colors.add(Color.green);
+                    break;
+                case "lightGray":
+                    colors.add(Color.lightGray);
+                    break;
+                case "magenta":
+                    colors.add(Color.magenta);
+                    break;
+                case "orange":
+                    colors.add(Color.orange);
+                    break;
+                case "pink":
+                    colors.add(Color.pink);
+                    break;
+                case "red":
+                    colors.add(Color.red);
+                    break;
+                case "white":
+                    colors.add(Color.white);
+                    break;
+                case "yellow":
+                    colors.add(Color.yellow);
+                    break;
+                default:
+                    colors.add(Color.white);
+                    break;
+            }
+        }
+        return colors;
     }
 
 }

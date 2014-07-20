@@ -1,8 +1,8 @@
-happy
-sad
-angry
-nervous
-scared
-loved
-surprised
-annoyed
+happy orange
+sad blue
+angry red
+nervous magenta
+scared green
+loved pink
+surprised yellow
+annoyed cyan

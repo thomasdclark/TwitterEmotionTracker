@@ -52,7 +52,7 @@ public final class TETView1 extends JFrame implements TETView {
          */
         Font textFont = new Font("TimeRoman", Font.BOLD, 30);
         this.displayText.setFont(textFont);
-        this.displayText.setForeground(Color.BLACK);
+        this.displayText.setForeground(Color.WHITE);
         this.displayText.setBackground(Color.WHITE);
 
         /*

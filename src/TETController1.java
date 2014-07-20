@@ -37,6 +37,8 @@ public final class TETController1 implements TETController {
         /*
          * Update the display
          */
+        this.view.displayText().setBackground(
+                this.model.colors.get(leadingEmotion));
         this.view.updateDisplay(output);
     }
 
