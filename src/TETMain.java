@@ -34,7 +34,7 @@ public final class TETMain {
      */
     public static String readOAuth(String fileName) {
         String content = null;
-        File file = new File(fileName); //for ex foo.txt
+        File file = new File(fileName);
         try {
             FileReader reader = new FileReader(file);
             char[] chars = new char[(int) file.length()];

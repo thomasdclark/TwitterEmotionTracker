@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -117,14 +116,6 @@ public final class TETView1 extends JFrame implements TETView {
     @Override
     public void updateDisplay(String output) {
         this.displayText.setText(output);
-    }
-
-    /**
-     * This view has no buttons so no need to implement actionPerformed
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
     }
 
     /**
