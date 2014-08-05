@@ -48,8 +48,9 @@ public final class TETStatusListener implements StatusListener {
     @Override
     public void onStatus(Status status) {
         int emotionIndex = this.incrementEmotion(status.getText());
-        if ((this.model.tweetCount() - 1) % 10 == 0) //Every 10 tweets will appear on the GUI
+        if (this.model.secondsPast == 1) //Tweet display will only change no more than once per second
         {
+            this.model.secondsPast = 0;
             this.view.tweetText().setText(
                     "@" + status.getUser().getScreenName() + ":\n"
                             + status.getText());

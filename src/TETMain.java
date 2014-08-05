@@ -3,6 +3,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.Timer;
+
 import twitter4j.FilterQuery;
 import twitter4j.StatusListener;
 import twitter4j.TwitterException;
@@ -67,8 +69,7 @@ public final class TETMain {
     }
 
     /**
-     * Takes the string containing the files content and extracts oAuth
-     * information
+     * Takes the string containing the emotions and puts then into an ArrayList
      */
     public static ArrayList<String> getEmotions(String fileName) {
         ArrayList<String> emotions = new ArrayList<String>();
@@ -153,5 +154,8 @@ public final class TETMain {
 
         twitterStream.addListener(listener);
         twitterStream.filter(fq);
+
+        Timer timer = new Timer(1000, model);
+        timer.start();
     }
 }

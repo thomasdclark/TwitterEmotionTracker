@@ -1,15 +1,19 @@
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import components.simplereader.SimpleReader;
 import components.simplereader.SimpleReader1L;
+import components.simplewriter.SimpleWriter;
+import components.simplewriter.SimpleWriter1L;
 
 /**
  * Model class to hold data collected from tweet stream.
  * 
  * @author Thomas Clark
  */
-public final class TETDataModel {
+public final class TETDataModel implements ActionListener {
 
     /**
      * The array of emotions
@@ -27,14 +31,25 @@ public final class TETDataModel {
     ArrayList<Integer> counts;
 
     /**
+     * How many seconds have pasted since the tweet display was changed. Is
+     * reset by TETStatusListener when it updates the tweet display
+     */
+    int secondsPast;
+
+    /**
      * How many tweets have occurred so far
      */
     int tweetCount;
 
     /**
-     * The number of tweets that the tweetCount resets at
+     * ArrayList to hold ArrayList of the tweet counts for the past 60 seconds
      */
-    final int tweetNumber = 30;
+    ArrayList<ArrayList<Integer>> past60Seconds;
+
+    /**
+     * The total count for each emotion for the entirety of the past 60 seconds
+     */
+    ArrayList<Integer> totalCountsPast60Seconds;
 
     /**
      * Default constructor.
@@ -47,15 +62,18 @@ public final class TETDataModel {
         this.emotions = array.get(0);
         this.colors = array.get(1);
         this.counts = new ArrayList<Integer>();
+        this.totalCountsPast60Seconds = new ArrayList<Integer>();
+        this.past60Seconds = new ArrayList<ArrayList<Integer>>();
         for (int i = 0; i < this.emotions.size(); i++) {
             this.counts.add(0);
+            this.totalCountsPast60Seconds.add(0);
         }
         this.tweetCount = 0;
+        this.secondsPast = 0;
     }
 
     /**
-     * Takes the string containing the files content and extracts oAuth
-     * information
+     * Takes the string containing the emotions and puts then into an ArrayList
      */
     public static ArrayList<ArrayList> getEmotionsAndColors(String fileName) {
         ArrayList<ArrayList> array = new ArrayList<ArrayList>();
@@ -86,36 +104,6 @@ public final class TETDataModel {
         array.add(emotions);
         array.add(colors);
         return array;
-    }
-
-    /**
-     * Increases this.counts[i] by one.
-     */
-    public void incrementCount(int i) {
-        int future = this.counts.get(i) + 1;
-        this.counts.set(i, future);
-        this.tweetCount++;
-        if (this.tweetCount > this.tweetNumber) {
-            this.tweetCount = 0;
-            for (int j = 0; j < this.counts.size(); j++) {
-                this.counts.set(j, 0);
-            }
-        }
-    }
-
-    /**
-     * Returns the index of the leading emotion
-     */
-    public int leadingEmotion() {
-        int leadingEmotion = 0;
-        int leadingAmount = 0;
-        for (int j = 0; j < this.counts.size(); j++) {
-            if (this.counts.get(j) > leadingAmount) {
-                leadingAmount = this.counts.get(j);
-                leadingEmotion = j;
-            }
-        }
-        return leadingEmotion;
     }
 
     /**
@@ -174,10 +162,76 @@ public final class TETDataModel {
     }
 
     /**
+     * Increases this.counts[i] by one.
+     */
+    public void incrementCount(int i) {
+        int future = this.counts.get(i) + 1;
+        this.counts.set(i, future);
+        this.tweetCount++;
+        this.updateTotalCounts();
+    }
+
+    /**
+     * Recounts and updates this.totalCountsPast60Seconds
+     */
+    public void updateTotalCounts() {
+        for (int j = 0; j < this.totalCountsPast60Seconds.size(); j++) {
+            this.totalCountsPast60Seconds.set(j, 0);
+        }
+        for (int i = 0; i < this.past60Seconds.size(); i++) {
+            ArrayList<Integer> arrayList = this.past60Seconds.get(i);
+            for (int j = 0; j < arrayList.size(); j++) {
+                int previous = this.totalCountsPast60Seconds.get(j);
+                int future = previous + arrayList.get(j);
+                this.totalCountsPast60Seconds.set(j, future);
+            }
+        }
+    }
+
+    /**
+     * Returns the index of the leading emotion from within the past second
+     */
+    public int leadingEmotion() {
+        int leadingEmotion = 0;
+        int leadingAmount = 0;
+        for (int j = 0; j < this.counts.size(); j++) {
+            if (this.counts.get(j) > leadingAmount) {
+                leadingAmount = this.counts.get(j);
+                leadingEmotion = j;
+            }
+        }
+        return leadingEmotion;
+    }
+
+    /**
      * Reports this.tweetCount.
      */
     public int tweetCount() {
         return this.tweetCount;
+    }
+
+    /**
+     * actionPerformed method overridden to fire when the timer in TETMain fires
+     * every second
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.secondsPast++;
+
+        SimpleWriter out = new SimpleWriter1L();
+        out.println(this.totalCountsPast60Seconds + "   " + this.counts);
+        out.close();
+
+        this.counts = new ArrayList<Integer>();
+        for (int i = 0; i < this.emotions.size(); i++) {
+            this.counts.add(0);
+        }
+        this.past60Seconds.add(0, this.counts);
+        if (this.past60Seconds.size() > 60) {
+            this.past60Seconds.remove(60);
+            this.updateTotalCounts();
+        }
+        this.tweetCount = 0;
     }
 
 }
