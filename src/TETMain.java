@@ -132,12 +132,18 @@ public final class TETMain {
         TETView view = new TETView1();
 
         /*
+         * Create plot
+         */
+        TETPlot plot = new TETPlot();
+
+        /*
          * Create controller
          */
-        TETController controller = new TETController1(model, view);
+        TETController controller = new TETController1(model, view, plot);
 
         //Register observer in view
         view.registerObserver(controller);
+        plot.registerObserver(controller);
 
         //Initialize status listener
         StatusListener listener = new TETStatusListener(model, controller, view);
@@ -155,7 +161,8 @@ public final class TETMain {
         twitterStream.addListener(listener);
         twitterStream.filter(fq);
 
-        Timer timer = new Timer(1000, model);
+        Timer timer = new Timer(1000, controller);
+        timer.setInitialDelay(5000);
         timer.start();
     }
 }

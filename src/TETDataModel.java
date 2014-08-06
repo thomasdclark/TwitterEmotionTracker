@@ -1,19 +1,15 @@
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import components.simplereader.SimpleReader;
 import components.simplereader.SimpleReader1L;
-import components.simplewriter.SimpleWriter;
-import components.simplewriter.SimpleWriter1L;
 
 /**
  * Model class to hold data collected from tweet stream.
  * 
  * @author Thomas Clark
  */
-public final class TETDataModel implements ActionListener {
+public final class TETDataModel {
 
     /**
      * The array of emotions
@@ -64,6 +60,13 @@ public final class TETDataModel implements ActionListener {
         this.counts = new ArrayList<Integer>();
         this.totalCountsPast60Seconds = new ArrayList<Integer>();
         this.past60Seconds = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < 60; i++) {
+            ArrayList<Integer> initList = new ArrayList<Integer>();
+            for (int j = 0; j < this.emotions.size(); j++) {
+                initList.add(0);
+            }
+            this.past60Seconds.add(initList);
+        }
         for (int i = 0; i < this.emotions.size(); i++) {
             this.counts.add(0);
             this.totalCountsPast60Seconds.add(0);
@@ -209,29 +212,4 @@ public final class TETDataModel implements ActionListener {
     public int tweetCount() {
         return this.tweetCount;
     }
-
-    /**
-     * actionPerformed method overridden to fire when the timer in TETMain fires
-     * every second
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.secondsPast++;
-
-        SimpleWriter out = new SimpleWriter1L();
-        out.println(this.totalCountsPast60Seconds + "   " + this.counts);
-        out.close();
-
-        this.counts = new ArrayList<Integer>();
-        for (int i = 0; i < this.emotions.size(); i++) {
-            this.counts.add(0);
-        }
-        this.past60Seconds.add(0, this.counts);
-        if (this.past60Seconds.size() > 60) {
-            this.past60Seconds.remove(60);
-            this.updateTotalCounts();
-        }
-        this.tweetCount = 0;
-    }
-
 }
