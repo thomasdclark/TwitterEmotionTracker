@@ -143,6 +143,7 @@ public final class TETMain {
 
         //Register observer in view
         view.registerObserver(controller);
+
         plot.registerObserver(controller);
 
         //Initialize status listener

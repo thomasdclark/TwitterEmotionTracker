@@ -38,14 +38,21 @@ public final class TETDataModel {
     int tweetCount;
 
     /**
-     * ArrayList to hold ArrayList of the tweet counts for the past 60 seconds
+     * The number of seconds to record over (graph over)
      */
-    ArrayList<ArrayList<Integer>> past60Seconds;
+    final int secondsToRecord = 3600;
 
     /**
-     * The total count for each emotion for the entirety of the past 60 seconds
+     * ArrayList to hold ArrayList of the tweet counts for the past however many
+     * seconds (defined in secondsToRecord)
      */
-    ArrayList<Integer> totalCountsPast60Seconds;
+    ArrayList<ArrayList<Integer>> pastSeconds;
+
+    /**
+     * The total count for each emotion for the entirety of the past however
+     * many seconds (defined in secondsToRecord)
+     */
+    ArrayList<Integer> totalCountsPastSeconds;
 
     /**
      * Default constructor.
@@ -58,18 +65,11 @@ public final class TETDataModel {
         this.emotions = array.get(0);
         this.colors = array.get(1);
         this.counts = new ArrayList<Integer>();
-        this.totalCountsPast60Seconds = new ArrayList<Integer>();
-        this.past60Seconds = new ArrayList<ArrayList<Integer>>();
-        for (int i = 0; i < 60; i++) {
-            ArrayList<Integer> initList = new ArrayList<Integer>();
-            for (int j = 0; j < this.emotions.size(); j++) {
-                initList.add(0);
-            }
-            this.past60Seconds.add(initList);
-        }
+        this.totalCountsPastSeconds = new ArrayList<Integer>();
+        this.pastSeconds = new ArrayList<ArrayList<Integer>>();
         for (int i = 0; i < this.emotions.size(); i++) {
             this.counts.add(0);
-            this.totalCountsPast60Seconds.add(0);
+            this.totalCountsPastSeconds.add(0);
         }
         this.tweetCount = 0;
         this.secondsPast = 0;
@@ -178,15 +178,15 @@ public final class TETDataModel {
      * Recounts and updates this.totalCountsPast60Seconds
      */
     public void updateTotalCounts() {
-        for (int j = 0; j < this.totalCountsPast60Seconds.size(); j++) {
-            this.totalCountsPast60Seconds.set(j, 0);
+        for (int j = 0; j < this.totalCountsPastSeconds.size(); j++) {
+            this.totalCountsPastSeconds.set(j, 0);
         }
-        for (int i = 0; i < this.past60Seconds.size(); i++) {
-            ArrayList<Integer> arrayList = this.past60Seconds.get(i);
+        for (int i = 0; i < this.pastSeconds.size(); i++) {
+            ArrayList<Integer> arrayList = this.pastSeconds.get(i);
             for (int j = 0; j < arrayList.size(); j++) {
-                int previous = this.totalCountsPast60Seconds.get(j);
+                int previous = this.totalCountsPastSeconds.get(j);
                 int future = previous + arrayList.get(j);
-                this.totalCountsPast60Seconds.set(j, future);
+                this.totalCountsPastSeconds.set(j, future);
             }
         }
     }

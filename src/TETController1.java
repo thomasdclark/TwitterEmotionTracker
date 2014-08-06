@@ -66,20 +66,24 @@ public final class TETController1 implements TETController {
     @Override
     public void updatePlot() {
         Plot2DPanel plot = new Plot2DPanel();
-        ArrayList<ArrayList<Integer>> past60Seconds = this.model.past60Seconds;
-        double[] x = new double[60];
-        for (int i = 0; i < 60; i++) {
+        ArrayList<ArrayList<Integer>> pastSeconds = this.model.pastSeconds;
+        int arraySize = pastSeconds.size();
+        plot.addLegend("WEST");
+        double[] x = new double[arraySize];
+        for (int i = 0; i < arraySize; i++) {
             x[i] = i;
         }
-        for (int i = 0; i < past60Seconds.get(0).size(); i++) {
-            double[] y = new double[60];
-            for (int j = 0; j < past60Seconds.size(); j++) {
-                y[j] = past60Seconds.get(j).get(i);
+        for (int i = 0; i < pastSeconds.get(0).size(); i++) {
+            double[] y = new double[arraySize];
+            for (int j = 0; j < pastSeconds.size(); j++) {
+                y[j] = pastSeconds.get(j).get(i);
             }
             plot.addLinePlot(this.model.emotions.get(i), x, y);
         }
+        this.plot.setSize(1000, 600);
         this.plot.setContentPane(plot);
         this.plot.revalidate();
+        this.plot.repaint();
     }
 
     /**
@@ -89,10 +93,12 @@ public final class TETController1 implements TETController {
     @Override
     public void actionPerformed(ActionEvent e) {
         this.model.secondsPast++;
-        this.updatePlot();
+        if (this.model.pastSeconds.size() > 0) {
+            this.updatePlot();
+        }
 
         SimpleWriter out = new SimpleWriter1L();
-        out.println(this.model.totalCountsPast60Seconds + "   "
+        out.println(this.model.totalCountsPastSeconds + "   "
                 + this.model.counts);
         out.close();
 
@@ -100,9 +106,9 @@ public final class TETController1 implements TETController {
         for (int i = 0; i < this.model.emotions.size(); i++) {
             this.model.counts.add(0);
         }
-        this.model.past60Seconds.add(0, this.model.counts);
-        if (this.model.past60Seconds.size() > 60) {
-            this.model.past60Seconds.remove(60);
+        this.model.pastSeconds.add(0, this.model.counts);
+        if (this.model.pastSeconds.size() > this.model.secondsToRecord) {
+            this.model.pastSeconds.remove(this.model.secondsToRecord);
             this.model.updateTotalCounts();
         }
         this.model.tweetCount = 0;

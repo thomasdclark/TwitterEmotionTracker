@@ -34,7 +34,8 @@ public final class TETPlot extends JFrame {
         /*
          * Start the main application window
          */
-        this.setSize(600, 600);
+        this.plot.addLegend("SOUTH");
+        this.setSize(1000, 600);
         this.setContentPane(this.plot);
         this.pack();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
