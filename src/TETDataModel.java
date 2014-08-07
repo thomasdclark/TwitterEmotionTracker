@@ -43,6 +43,12 @@ public final class TETDataModel {
     final int secondsToRecord = 3600;
 
     /**
+     * The amount of time that passes between each consecutive point on the
+     * graph (this variable determines how often the Timer fires)
+     */
+    final int timePeriod = 5;
+
+    /**
      * ArrayList to hold ArrayList of the tweet counts for the past however many
      * seconds (defined in secondsToRecord)
      */

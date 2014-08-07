@@ -162,7 +162,7 @@ public final class TETMain {
         twitterStream.addListener(listener);
         twitterStream.filter(fq);
 
-        Timer timer = new Timer(1000, controller);
+        Timer timer = new Timer(model.timePeriod * 1000, controller);
         timer.setInitialDelay(5000);
         timer.start();
     }
