@@ -22,6 +22,11 @@ public final class TETDataModel {
     ArrayList<Color> colors;
 
     /**
+     * The array of colors as strings
+     */
+    ArrayList<String> colorStrings;
+
+    /**
      * An array to count how many times each emotion was tweeted
      */
     ArrayList<Integer> counts;
@@ -46,7 +51,7 @@ public final class TETDataModel {
      * The amount of time that passes between each consecutive point on the
      * graph (this variable determines how often the Timer fires)
      */
-    final int timePeriod = 5;
+    final int timePeriod = 1;
 
     /**
      * ArrayList to hold ArrayList of the tweet counts for the past however many
@@ -56,7 +61,7 @@ public final class TETDataModel {
 
     /**
      * The total count for each emotion for the entirety of the past however
-     * many seconds (defined in secondsToRecord)
+     * many seconds (defined in timePeriod)
      */
     ArrayList<Integer> totalCountsPastSeconds;
 
@@ -70,6 +75,7 @@ public final class TETDataModel {
         ArrayList<ArrayList> array = getEmotionsAndColors("resources/emotions.txt");
         this.emotions = array.get(0);
         this.colors = array.get(1);
+        this.colorStrings = array.get(2);
         this.counts = new ArrayList<Integer>();
         this.totalCountsPastSeconds = new ArrayList<Integer>();
         this.pastSeconds = new ArrayList<ArrayList<Integer>>();
@@ -112,6 +118,7 @@ public final class TETDataModel {
         colors = setColors(colorStrings);
         array.add(emotions);
         array.add(colors);
+        array.add(colorStrings);
         return array;
     }
 

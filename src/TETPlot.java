@@ -1,6 +1,11 @@
-import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.io.IOException;
+import java.net.URL;
 
-import org.math.plot.Plot2DPanel;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /**
  * View class that implements TSTView. To be used with TSTController2.
@@ -15,9 +20,9 @@ public final class TETPlot extends JFrame {
     private TETController controller;
 
     /**
-     * Line plot
+     * Line plot within a JLabel
      */
-    public Plot2DPanel plot;
+    public JLabel plot;
 
     /**
      * Default constructor.
@@ -29,17 +34,8 @@ public final class TETPlot extends JFrame {
          */
         super("Twitter Emotion Tracker");
 
-        this.plot = new Plot2DPanel();
-
-        /*
-         * Start the main application window
-         */
-        this.plot.addLegend("SOUTH");
-        this.setSize(1000, 600);
-        this.setContentPane(this.plot);
-        this.pack();
+        this.plot = null;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setVisible(true);
     }
 
     /**
@@ -48,4 +44,18 @@ public final class TETPlot extends JFrame {
     public void registerObserver(TETController controller) {
         this.controller = controller;
     }
+
+    /**
+     * Register argument as observer/listener of this
+     */
+    public void replacePlot(String urlString) throws IOException {
+        this.getContentPane().removeAll();
+        this.plot = new JLabel(new ImageIcon(ImageIO.read(new URL(urlString))));
+        this.getContentPane().add(this.plot, BorderLayout.CENTER);
+        this.pack();
+        this.revalidate();
+        this.repaint();
+        this.setVisible(true);
+    }
+
 }

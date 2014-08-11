@@ -1,8 +1,17 @@
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import org.math.plot.Plot2DPanel;
-
+import com.googlecode.charts4j.Color;
+import com.googlecode.charts4j.Data;
+import com.googlecode.charts4j.Fills;
+import com.googlecode.charts4j.GCharts;
+import com.googlecode.charts4j.Line;
+import com.googlecode.charts4j.LineChart;
+import com.googlecode.charts4j.LineStyle;
+import com.googlecode.charts4j.LinearGradientFill;
+import com.googlecode.charts4j.Plots;
+import com.googlecode.charts4j.Shape;
 import components.simplewriter.SimpleWriter;
 import components.simplewriter.SimpleWriter1L;
 
@@ -65,10 +74,10 @@ public final class TETController1 implements TETController {
 
     @Override
     public void updatePlot() {
-        Plot2DPanel plot = new Plot2DPanel();
         ArrayList<ArrayList<Integer>> pastSeconds = this.model.pastSeconds;
+        ArrayList<Line> lines = new ArrayList<Line>();
         int arraySize = pastSeconds.size();
-        plot.addLegend("WEST");
+        int max = 0;
         double[] x = new double[arraySize];
         for (int i = 0; i < arraySize; i++) {
             x[i] = i;
@@ -77,13 +86,80 @@ public final class TETController1 implements TETController {
             double[] y = new double[arraySize];
             for (int j = 0; j < pastSeconds.size(); j++) {
                 y[j] = pastSeconds.get(j).get(i);
+                if (y[j] > max) {
+                    max = (int) y[j];
+                }
             }
-            plot.addLinePlot(this.model.emotions.get(i), x, y);
+            String colorString = this.model.colorStrings.get(i);
+            Color color;
+            switch (colorString) {
+                case "black":
+                    color = Color.BLACK;
+                    break;
+                case "blue":
+                    color = Color.BLUE;
+                    break;
+                case "cyan":
+                    color = Color.CYAN;
+                    break;
+                case "darkGray":
+                    color = Color.DARKGRAY;
+                    break;
+                case "gray":
+                    color = Color.GRAY;
+                    break;
+                case "green":
+                    color = Color.GREEN;
+                    break;
+                case "lightGray":
+                    color = Color.GRAY;
+                    break;
+                case "magenta":
+                    color = Color.MAGENTA;
+                    break;
+                case "orange":
+                    color = Color.ORANGE;
+                    break;
+                case "pink":
+                    color = Color.PINK;
+                    break;
+                case "red":
+                    color = Color.RED;
+                    break;
+                case "white":
+                    color = Color.WHITE;
+                    break;
+                case "yellow":
+                    color = Color.YELLOW;
+                    break;
+                default:
+                    color = Color.WHITE;
+                    break;
+            }
+            Line line = Plots.newLine(Data.newData(y), color,
+                    this.model.emotions.get(i));
+            line.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
+            line.addShapeMarkers(Shape.DIAMOND, color, 12);
+            line.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
+            lines.add(line);
         }
-        this.plot.setSize(1000, 600);
-        this.plot.setContentPane(plot);
-        this.plot.revalidate();
-        this.plot.repaint();
+
+        LineChart chart = GCharts.newLineChart(lines);
+        chart.setSize(600, 450);
+        chart.setTitle("Twitter Emotion Tracking for past " + arraySize
+                + " seconds", Color.WHITE, 14);
+        chart.setGrid(25, 25, 3, 2);
+        chart.setBackgroundFill(Fills.newSolidFill(Color.newColor("1F1D1D")));
+        LinearGradientFill fill = Fills.newLinearGradientFill(0,
+                Color.newColor("363433"), 100);
+        fill.addColorAndOffset(Color.newColor("2E2B2A"), 0);
+        chart.setAreaFill(fill);
+        String urlString = chart.toURLString();
+        try {
+            this.plot.replacePlot(urlString);
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        }
     }
 
     /**
