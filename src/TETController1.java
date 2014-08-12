@@ -2,8 +2,12 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.googlecode.charts4j.AxisLabels;
+import com.googlecode.charts4j.AxisLabelsFactory;
+import com.googlecode.charts4j.AxisStyle;
+import com.googlecode.charts4j.AxisTextAlignment;
 import com.googlecode.charts4j.Color;
-import com.googlecode.charts4j.Data;
+import com.googlecode.charts4j.DataUtil;
 import com.googlecode.charts4j.Fills;
 import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.Line;
@@ -78,17 +82,17 @@ public final class TETController1 implements TETController {
         ArrayList<Line> lines = new ArrayList<Line>();
         int arraySize = pastSeconds.size();
         int max = 0;
-        double[] x = new double[arraySize];
-        for (int i = 0; i < arraySize; i++) {
-            x[i] = i;
+        for (int i = 0; i < pastSeconds.get(0).size(); i++) {
+            for (int j = 0; j < pastSeconds.size(); j++) {
+                if (pastSeconds.get(j).get(i) > max) {
+                    max = pastSeconds.get(j).get(i);
+                }
+            }
         }
         for (int i = 0; i < pastSeconds.get(0).size(); i++) {
             double[] y = new double[arraySize];
             for (int j = 0; j < pastSeconds.size(); j++) {
                 y[j] = pastSeconds.get(j).get(i);
-                if (y[j] > max) {
-                    max = (int) y[j];
-                }
             }
             String colorString = this.model.colorStrings.get(i);
             Color color;
@@ -136,27 +140,36 @@ public final class TETController1 implements TETController {
                     color = Color.WHITE;
                     break;
             }
-            Line line = Plots.newLine(Data.newData(y), color,
-                    this.model.emotions.get(i));
+            Line line = Plots.newLine(DataUtil.scaleWithinRange(0, max, y),
+                    color, this.model.emotions.get(i));
             line.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
             line.addShapeMarkers(Shape.DIAMOND, color, 12);
             line.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
             lines.add(line);
         }
-
         LineChart chart = GCharts.newLineChart(lines);
         chart.setSize(600, 450);
         chart.setTitle("Twitter Emotion Tracking for past " + arraySize
                 + " seconds", Color.WHITE, 14);
-        chart.setGrid(25, 25, 3, 2);
+        chart.setGrid(100, 10, 1, 0);
         chart.setBackgroundFill(Fills.newSolidFill(Color.newColor("1F1D1D")));
         LinearGradientFill fill = Fills.newLinearGradientFill(0,
                 Color.newColor("363433"), 100);
         fill.addColorAndOffset(Color.newColor("2E2B2A"), 0);
         chart.setAreaFill(fill);
+        AxisStyle axisStyle = AxisStyle.newAxisStyle(Color.WHITE, 12,
+                AxisTextAlignment.CENTER);
+        AxisLabels yAxis = AxisLabelsFactory.newNumericRangeAxisLabels(0, max);
+        yAxis.setAxisStyle(axisStyle);
+        AxisLabels xAxis = AxisLabelsFactory.newNumericRangeAxisLabels(0,
+                arraySize);
+        xAxis.setAxisStyle(axisStyle);
+        chart.addYAxisLabels(yAxis);
+        chart.addXAxisLabels(xAxis);
         String urlString = chart.toURLString();
         try {
             this.plot.replacePlot(urlString);
+            System.out.println(urlString);
         } catch (IOException e) {
             e.printStackTrace(System.out);
         }

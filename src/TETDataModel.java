@@ -45,7 +45,7 @@ public final class TETDataModel {
     /**
      * The number of seconds to record over (graph over)
      */
-    final int secondsToRecord = 3600;
+    final int secondsToRecord = 60;
 
     /**
      * The amount of time that passes between each consecutive point on the
