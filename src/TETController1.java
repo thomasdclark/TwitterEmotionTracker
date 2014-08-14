@@ -181,6 +181,19 @@ public final class TETController1 implements TETController {
         for (int i = 0; i < this.model.emotions.size(); i++) {
             this.model.counts.add(0);
         }
+
+        /*
+         * Add record to archive file
+         */
+        if (this.model.pastSeconds.size() != 0) {
+            for (int i = 0; i < (this.model.pastSeconds.get(0).size() - 1); i++) {
+                this.model.fileWriter.print(this.model.pastSeconds.get(0)
+                        .get(i) + " ");
+            }
+            this.model.fileWriter.println(this.model.pastSeconds.get(0).get(
+                    this.model.pastSeconds.get(0).size() - 1));
+        }
+
         this.model.pastSeconds.add(0, this.model.counts);
         if (this.model.pastSeconds.size() > this.model.secondsToRecord) {
             this.model.pastSeconds.remove(this.model.secondsToRecord);

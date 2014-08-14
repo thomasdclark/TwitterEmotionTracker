@@ -1,8 +1,11 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Date;
 
 import components.simplereader.SimpleReader;
 import components.simplereader.SimpleReader1L;
+import components.simplewriter.SimpleWriter;
+import components.simplewriter.SimpleWriter1L;
 
 /**
  * Model class to hold data collected from tweet stream.
@@ -66,16 +69,41 @@ public final class TETDataModel {
     ArrayList<Integer> totalCountsPastSeconds;
 
     /**
+     * The date that this data model was created at
+     */
+    Date date;
+
+    /**
+     * File output stream to write all data to archive file
+     */
+    SimpleWriter fileWriter;
+
+    /**
      * Default constructor.
      */
     public TETDataModel() {
         /*
          * Initialize model
          */
+        this.date = new Date();
+        this.fileWriter = new SimpleWriter1L("archive/" + this.date.getTime()
+                + ".txt");
         ArrayList<ArrayList> array = getEmotionsAndColors("resources/emotions.txt");
         this.emotions = array.get(0);
         this.colors = array.get(1);
         this.colorStrings = array.get(2);
+        /*
+         * Put heading in archive file
+         */
+        for (int i = 0; i < (this.emotions.size() - 1); i++) {
+            this.fileWriter.print(this.emotions.get(i) + " ");
+        }
+        this.fileWriter.println(this.emotions.get(this.emotions.size() - 1));
+        for (int i = 0; i < (this.colorStrings.size() - 1); i++) {
+            this.fileWriter.print(this.colorStrings.get(i) + " ");
+        }
+        this.fileWriter
+                .println(this.colorStrings.get(this.colorStrings.size() - 1));
         this.counts = new ArrayList<Integer>();
         this.totalCountsPastSeconds = new ArrayList<Integer>();
         this.pastSeconds = new ArrayList<ArrayList<Integer>>();
