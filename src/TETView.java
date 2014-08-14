@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 import javax.swing.JTextArea;
 
 /**
@@ -29,5 +31,10 @@ public interface TETView {
      * Returns the tweetText JTextArea
      */
     JTextArea tweetText();
+
+    /**
+     * Replaces/refreshes plot in view
+     */
+    public void replacePlot(String urlString) throws IOException;
 
 }

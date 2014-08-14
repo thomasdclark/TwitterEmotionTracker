@@ -132,19 +132,12 @@ public final class TETMain {
         TETView view = new TETView1();
 
         /*
-         * Create plot
-         */
-        TETPlot plot = new TETPlot();
-
-        /*
          * Create controller
          */
-        TETController controller = new TETController1(model, view, plot);
+        TETController controller = new TETController1(model, view);
 
         //Register observer in view
         view.registerObserver(controller);
-
-        plot.registerObserver(controller);
 
         //Initialize status listener
         StatusListener listener = new TETStatusListener(model, controller, view);

@@ -1,6 +1,11 @@
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 import com.googlecode.charts4j.AxisLabels;
 import com.googlecode.charts4j.AxisLabelsFactory;
@@ -37,17 +42,11 @@ public final class TETController1 implements TETController {
     private final TETView view;
 
     /**
-     * Plot object.
-     */
-    private final TETPlot plot;
-
-    /**
      * Constructor; connects this to the model and view.
      */
-    public TETController1(TETDataModel model, TETView view, TETPlot plot) {
+    public TETController1(TETDataModel model, TETView view) {
         this.model = model;
         this.view = view;
-        this.plot = plot;
     }
 
     /**
@@ -58,7 +57,7 @@ public final class TETController1 implements TETController {
         int leadingEmotion = this.model.leadingEmotion();
         String emotionString = this.model.emotions.get(leadingEmotion);
 
-        String output = "\n   Twitter is:\n     " + emotionString;
+        String output = "\n\n    Twitter is:\n      " + emotionString;
 
         /*
          * Update the display
@@ -151,7 +150,7 @@ public final class TETController1 implements TETController {
         chart.setSize(600, 450);
         chart.setTitle("Twitter Emotion Tracking for past " + arraySize
                 + " seconds", Color.WHITE, 14);
-        chart.setGrid(100, 10, 1, 0);
+        chart.setGrid(100, 500 / (double) max, 1, 0);
         chart.setBackgroundFill(Fills.newSolidFill(Color.newColor("1F1D1D")));
         LinearGradientFill fill = Fills.newLinearGradientFill(0,
                 Color.newColor("363433"), 100);
@@ -168,11 +167,35 @@ public final class TETController1 implements TETController {
         chart.addXAxisLabels(xAxis);
         String urlString = chart.toURLString();
         try {
-            this.plot.replacePlot(urlString);
+            this.view.replacePlot(urlString);
             System.out.println(urlString);
         } catch (IOException e) {
             e.printStackTrace(System.out);
         }
+    }
+
+    @Override
+    public JLabel initialPlot() {
+        double[] y = { 0 };
+        Line line = Plots.newLine(DataUtil.scaleWithinRange(0, 0, y),
+                Color.WHITE, "emotion");
+        LineChart chart = GCharts.newLineChart(line);
+        chart.setSize(600, 450);
+        chart.setTitle("Twitter Emotion Tracking", Color.WHITE, 14);
+        chart.setGrid(100, 100, 1, 0);
+        chart.setBackgroundFill(Fills.newSolidFill(Color.newColor("1F1D1D")));
+        LinearGradientFill fill = Fills.newLinearGradientFill(0,
+                Color.newColor("363433"), 100);
+        fill.addColorAndOffset(Color.newColor("2E2B2A"), 0);
+        chart.setAreaFill(fill);
+        String urlString = chart.toURLString();
+        JLabel plot = new JLabel();
+        try {
+            plot = new JLabel(new ImageIcon(ImageIO.read(new URL(urlString))));
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        }
+        return plot;
     }
 
     /**

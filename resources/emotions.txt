@@ -1,6 +1,6 @@
-happy orange
+happy red
 sad blue
-angry red
+angry orange
 nervous magenta
 scared green
 loved pink

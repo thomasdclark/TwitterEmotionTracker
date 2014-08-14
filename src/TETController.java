@@ -1,6 +1,8 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JLabel;
+
 /**
  * Controller interface for multiple controllers to be implemented from.
  * 
@@ -24,6 +26,8 @@ public interface TETController extends ActionListener {
      * Updates the data plot.
      */
     void updatePlot();
+
+    public JLabel initialPlot();
 
     /**
      * Override of actionPerformed() method from ActionListener interface

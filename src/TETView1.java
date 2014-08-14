@@ -1,8 +1,17 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.io.IOException;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -19,9 +28,16 @@ public final class TETView1 extends JFrame implements TETView {
     private TETController controller;
 
     /**
+     * Plot object.
+     */
+    private JLabel plot;
+
+    private JPanel panel;
+
+    /**
      * Constants
      */
-    private static final int LINES_IN_DISPLAY_TEXT = 4,
+    private static final int LINES_IN_DISPLAY_TEXT = 2,
             LINE_LENGTHS_IN_DISPLAY_TEXT = 8, LINES_IN_TWEET_TEXT = 5,
             LINE_LENGTHS_IN_TWEET_TEXT = 8;
 
@@ -83,16 +99,18 @@ public final class TETView1 extends JFrame implements TETView {
         JScrollPane displayTextScrollPane = new JScrollPane(this.displayText);
         JScrollPane tweetTextScrollPane = new JScrollPane(this.tweetText);
 
-        /*
-         * Organize main window by setting layout
-         */
-        this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
+        this.panel = new JPanel();
+        this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.PAGE_AXIS));
+        this.panel.setPreferredSize(new Dimension(250, 450));
 
         /*
          * Add scroll panes and button panel to main window
          */
-        this.add(displayTextScrollPane);
-        this.add(tweetTextScrollPane);
+        this.panel.add(displayTextScrollPane);
+        this.panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.panel.add(tweetTextScrollPane);
+
+        this.add(this.panel);
 
         /*
          * Start the main application window
@@ -116,6 +134,21 @@ public final class TETView1 extends JFrame implements TETView {
     @Override
     public void updateDisplay(String output) {
         this.displayText.setText(output);
+    }
+
+    /**
+     * Replaces/refreshes plot in view
+     */
+    @Override
+    public void replacePlot(String urlString) throws IOException {
+        this.getContentPane().removeAll();
+        this.plot = new JLabel(new ImageIcon(ImageIO.read(new URL(urlString))));
+        this.add(this.panel, BorderLayout.WEST);
+        this.add(this.plot, BorderLayout.EAST);
+        this.pack();
+        this.revalidate();
+        this.repaint();
+        this.setVisible(true);
     }
 
     /**
