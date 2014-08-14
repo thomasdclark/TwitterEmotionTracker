@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import twitter4j.FilterQuery;
 import twitter4j.StatusListener;
@@ -99,6 +101,24 @@ public final class TETMain {
      * Main function
      */
     public static void main(String[] args) throws TwitterException {
+
+        //Use the Mac OS X menu bar for JMenuBar Instance
+        try {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty(
+                    "com.apple.mrj.application.apple.menu.about.name",
+                    "TwitterEmotionTracker");
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            System.out.println("ClassNotFoundException: " + e.getMessage());
+        } catch (InstantiationException e) {
+            System.out.println("InstantiationException: " + e.getMessage());
+        } catch (IllegalAccessException e) {
+            System.out.println("IllegalAccessException: " + e.getMessage());
+        } catch (UnsupportedLookAndFeelException e) {
+            System.out.println("UnsupportedLookAndFeelException: "
+                    + e.getMessage());
+        }
 
         /*
          * OAuth configuration by extracting a text file. Go to the /resources

@@ -1,7 +1,9 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 
@@ -11,6 +13,9 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -35,6 +40,11 @@ public final class TETView1 extends JFrame implements TETView {
     private JPanel graphPanel;
 
     /**
+     * Application menu bar
+     */
+    private JMenuBar menuBar;
+
+    /**
      * Constants
      */
     private static final int LINES_IN_DISPLAY_TEXT = 2,
@@ -57,6 +67,17 @@ public final class TETView1 extends JFrame implements TETView {
          * Call JFrame superclass with title
          */
         super("Twitter Emotion Tracker");
+
+        /*
+         * Prepare menu bar
+         */
+        this.menuBar = new JMenuBar();
+        JMenu file = new JMenu("Archive");
+        JMenuItem item = new JMenuItem("Display all past data");
+        item.addActionListener(this);
+        file.add(item);
+        this.menuBar.add(file);
+        this.setJMenuBar(this.menuBar);
 
         /*
          * Create widgets
@@ -202,5 +223,20 @@ public final class TETView1 extends JFrame implements TETView {
     @Override
     public JTextArea tweetText() {
         return this.tweetText;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        /*
+         * Set cursor to indicate computation on-going
+         */
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        System.out.println("Get all past data pressed");
+
+        /*
+         * Set the cursor back to normal
+         */
+        this.setCursor(Cursor.getDefaultCursor());
     }
 }

@@ -1,3 +1,4 @@
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.JTextArea;
@@ -10,7 +11,7 @@ import javax.swing.JTextArea;
  * 
  * @author Thomas Clark
  */
-public interface TETView {
+public interface TETView extends ActionListener {
 
     /**
      * Register argument as observer/listener of this
