@@ -155,6 +155,7 @@ public final class TETMain {
         twitterStream.addListener(listener);
         twitterStream.filter(fq);
 
+        //Set up and start timer to fire every second
         Timer timer = new Timer(model.timePeriod * 1000, controller);
         timer.setInitialDelay(5000);
         timer.start();

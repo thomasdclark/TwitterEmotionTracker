@@ -45,6 +45,11 @@ public final class TETStatusListener implements StatusListener {
         return emotionIndex;
     }
 
+    /**
+     * onStatus() is called every time that a status with an identified emotion
+     * is tweeted. This method receives the status and updates the model and
+     * views based on the status content.
+     */
     @Override
     public void onStatus(Status status) {
         int emotionIndex = this.incrementEmotion(status.getText());

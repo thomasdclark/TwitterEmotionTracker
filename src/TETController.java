@@ -1,8 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JLabel;
-
 /**
  * Controller interface for multiple controllers to be implemented from.
  * 
@@ -18,16 +16,9 @@ public interface TETController extends ActionListener {
     void updateViewToMatchModel();
 
     /**
-     * Processes event to reset model.
-     */
-    void processResetEvent();
-
-    /**
-     * Updates the data plot.
+     * Updates the current data plot.
      */
     void updatePlot();
-
-    public JLabel initialPlot();
 
     /**
      * Override of actionPerformed() method from ActionListener interface

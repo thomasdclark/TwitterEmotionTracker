@@ -28,11 +28,11 @@ public final class TETView1 extends JFrame implements TETView {
     private TETController controller;
 
     /**
-     * Plot object.
+     * Panel objects to hold content.
      */
-    private JLabel plot;
+    private JPanel displayPanel;
 
-    private JPanel panel;
+    private JPanel graphPanel;
 
     /**
      * Constants
@@ -99,18 +99,29 @@ public final class TETView1 extends JFrame implements TETView {
         JScrollPane displayTextScrollPane = new JScrollPane(this.displayText);
         JScrollPane tweetTextScrollPane = new JScrollPane(this.tweetText);
 
-        this.panel = new JPanel();
-        this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.PAGE_AXIS));
-        this.panel.setPreferredSize(new Dimension(250, 450));
+        /*
+         * Set up displayPanel to hold both displays
+         */
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.setPreferredSize(new Dimension(250, 460));
+        this.displayPanel = new JPanel();
+        this.displayPanel.setLayout(new BoxLayout(this.displayPanel,
+                BoxLayout.LINE_AXIS));
+        this.displayPanel.setPreferredSize(new Dimension(260, 460));
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(displayTextScrollPane);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(tweetTextScrollPane);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        this.displayPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.displayPanel.add(panel);
+        this.displayPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
         /*
-         * Add scroll panes and button panel to main window
+         * Add displayPanel to frame
          */
-        this.panel.add(displayTextScrollPane);
-        this.panel.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.panel.add(tweetTextScrollPane);
-
-        this.add(this.panel);
+        this.add(this.displayPanel);
 
         /*
          * Start the main application window
@@ -141,10 +152,36 @@ public final class TETView1 extends JFrame implements TETView {
      */
     @Override
     public void replacePlot(String urlString) throws IOException {
+        /*
+         * Remove all content from frame and get new plot as a JLabel
+         */
         this.getContentPane().removeAll();
-        this.plot = new JLabel(new ImageIcon(ImageIO.read(new URL(urlString))));
-        this.add(this.panel, BorderLayout.WEST);
-        this.add(this.plot, BorderLayout.EAST);
+        JLabel plot = new JLabel(
+                new ImageIcon(ImageIO.read(new URL(urlString))));
+
+        /*
+         * Recreate graphPanel from new plot
+         */
+        JPanel verticalPanel = new JPanel();
+        verticalPanel.setLayout(new BoxLayout(verticalPanel,
+                BoxLayout.PAGE_AXIS));
+        verticalPanel.setPreferredSize(new Dimension(650, 460));
+        verticalPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        verticalPanel.add(plot);
+        verticalPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        JPanel horizontalPanel = new JPanel();
+        horizontalPanel.setLayout(new BoxLayout(horizontalPanel,
+                BoxLayout.LINE_AXIS));
+        horizontalPanel.setPreferredSize(new Dimension(655, 460));
+        horizontalPanel.add(verticalPanel);
+        horizontalPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.graphPanel = horizontalPanel;
+
+        /*
+         * Add displayPanel and graphPanel to frame and repaint frame
+         */
+        this.add(this.displayPanel, BorderLayout.WEST);
+        this.add(this.graphPanel, BorderLayout.EAST);
         this.pack();
         this.revalidate();
         this.repaint();

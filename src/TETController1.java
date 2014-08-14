@@ -1,11 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 import com.googlecode.charts4j.AxisLabels;
 import com.googlecode.charts4j.AxisLabelsFactory;
@@ -21,8 +16,6 @@ import com.googlecode.charts4j.LineStyle;
 import com.googlecode.charts4j.LinearGradientFill;
 import com.googlecode.charts4j.Plots;
 import com.googlecode.charts4j.Shape;
-import components.simplewriter.SimpleWriter;
-import components.simplewriter.SimpleWriter1L;
 
 /**
  * Controller class that implements TSTController. To be used with TSTView2.
@@ -68,13 +61,8 @@ public final class TETController1 implements TETController {
     }
 
     /**
-     * Processes event to reset model.
+     * Updates the current data plot.
      */
-    @Override
-    public void processResetEvent() {
-
-    }
-
     @Override
     public void updatePlot() {
         ArrayList<ArrayList<Integer>> pastSeconds = this.model.pastSeconds;
@@ -147,9 +135,9 @@ public final class TETController1 implements TETController {
             lines.add(line);
         }
         LineChart chart = GCharts.newLineChart(lines);
-        chart.setSize(600, 450);
-        chart.setTitle("Twitter Emotion Tracking for past " + arraySize
-                + " seconds", Color.WHITE, 14);
+        chart.setSize(650, 450);
+        chart.setTitle("Tweet Count For Select Emotions For Past " + arraySize
+                + " Seconds", Color.WHITE, 14);
         chart.setGrid(100, 500 / (double) max, 1, 0);
         chart.setBackgroundFill(Fills.newSolidFill(Color.newColor("1F1D1D")));
         LinearGradientFill fill = Fills.newLinearGradientFill(0,
@@ -160,42 +148,25 @@ public final class TETController1 implements TETController {
                 AxisTextAlignment.CENTER);
         AxisLabels yAxis = AxisLabelsFactory.newNumericRangeAxisLabels(0, max);
         yAxis.setAxisStyle(axisStyle);
+        //AxisLabels yAxis1 = AxisLabelsFactory.newAxisLabels("Tweet #", 50.0);
+        //yAxis1.setAxisStyle(AxisStyle.newAxisStyle(Color.WHITE, 14,
+        //        AxisTextAlignment.CENTER));
         AxisLabels xAxis = AxisLabelsFactory.newNumericRangeAxisLabels(0,
                 arraySize);
+        //AxisLabels xAxis1 = AxisLabelsFactory.newAxisLabels("Seconds", 50.0);
+        //xAxis1.setAxisStyle(AxisStyle.newAxisStyle(Color.WHITE, 14,
+        //        AxisTextAlignment.CENTER));
         xAxis.setAxisStyle(axisStyle);
         chart.addYAxisLabels(yAxis);
+        //chart.addYAxisLabels(yAxis1);
         chart.addXAxisLabels(xAxis);
+        //chart.addXAxisLabels(xAxis1);
         String urlString = chart.toURLString();
         try {
             this.view.replacePlot(urlString);
-            System.out.println(urlString);
         } catch (IOException e) {
             e.printStackTrace(System.out);
         }
-    }
-
-    @Override
-    public JLabel initialPlot() {
-        double[] y = { 0 };
-        Line line = Plots.newLine(DataUtil.scaleWithinRange(0, 0, y),
-                Color.WHITE, "emotion");
-        LineChart chart = GCharts.newLineChart(line);
-        chart.setSize(600, 450);
-        chart.setTitle("Twitter Emotion Tracking", Color.WHITE, 14);
-        chart.setGrid(100, 100, 1, 0);
-        chart.setBackgroundFill(Fills.newSolidFill(Color.newColor("1F1D1D")));
-        LinearGradientFill fill = Fills.newLinearGradientFill(0,
-                Color.newColor("363433"), 100);
-        fill.addColorAndOffset(Color.newColor("2E2B2A"), 0);
-        chart.setAreaFill(fill);
-        String urlString = chart.toURLString();
-        JLabel plot = new JLabel();
-        try {
-            plot = new JLabel(new ImageIcon(ImageIO.read(new URL(urlString))));
-        } catch (IOException e) {
-            e.printStackTrace(System.out);
-        }
-        return plot;
     }
 
     /**
@@ -205,14 +176,6 @@ public final class TETController1 implements TETController {
     @Override
     public void actionPerformed(ActionEvent e) {
         this.model.secondsPast++;
-        if (this.model.pastSeconds.size() > 0) {
-            this.updatePlot();
-        }
-
-        SimpleWriter out = new SimpleWriter1L();
-        out.println(this.model.totalCountsPastSeconds + "   "
-                + this.model.counts);
-        out.close();
 
         this.model.counts = new ArrayList<Integer>();
         for (int i = 0; i < this.model.emotions.size(); i++) {
@@ -223,6 +186,11 @@ public final class TETController1 implements TETController {
             this.model.pastSeconds.remove(this.model.secondsToRecord);
             this.model.updateTotalCounts();
         }
+
+        if (this.model.pastSeconds.size() > 1) {
+            this.updatePlot();
+        }
+
         this.model.tweetCount = 0;
     }
 }

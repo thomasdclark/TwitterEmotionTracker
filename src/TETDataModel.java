@@ -61,7 +61,7 @@ public final class TETDataModel {
 
     /**
      * The total count for each emotion for the entirety of the past however
-     * many seconds (defined in timePeriod)
+     * many seconds (defined in secondsToRecord)
      */
     ArrayList<Integer> totalCountsPastSeconds;
 
@@ -188,7 +188,7 @@ public final class TETDataModel {
     }
 
     /**
-     * Recounts and updates this.totalCountsPast60Seconds
+     * Recounts and updates this.totalCountsPastSeconds
      */
     public void updateTotalCounts() {
         for (int j = 0; j < this.totalCountsPastSeconds.size(); j++) {
