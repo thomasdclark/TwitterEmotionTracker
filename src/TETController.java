@@ -21,6 +21,11 @@ public interface TETController extends ActionListener {
     void updatePlot();
 
     /**
+     * Creates archive plot and displays in JFrame
+     */
+    void createArchivePlot();
+
+    /**
      * Override of actionPerformed() method from ActionListener interface
      */
     @Override

@@ -206,7 +206,6 @@ public final class TETView1 extends JFrame implements TETView {
         this.pack();
         this.revalidate();
         this.repaint();
-        this.setVisible(true);
     }
 
     /**
@@ -232,7 +231,7 @@ public final class TETView1 extends JFrame implements TETView {
          */
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        System.out.println("Get all past data pressed");
+        this.controller.createArchivePlot();
 
         /*
          * Set the cursor back to normal

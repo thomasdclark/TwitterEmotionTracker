@@ -1,6 +1,11 @@
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.swing.JFrame;
+
+import org.math.plot.Plot2DPanel;
 
 import com.googlecode.charts4j.AxisLabels;
 import com.googlecode.charts4j.AxisLabelsFactory;
@@ -16,6 +21,9 @@ import com.googlecode.charts4j.LineStyle;
 import com.googlecode.charts4j.LinearGradientFill;
 import com.googlecode.charts4j.Plots;
 import com.googlecode.charts4j.Shape;
+import components.simplereader.SimpleReader;
+import components.simplereader.SimpleReader1L;
+import components.simplewriter.SimpleWriter1L;
 
 /**
  * Controller class that implements TSTController. To be used with TSTView2.
@@ -170,6 +178,81 @@ public final class TETController1 implements TETController {
     }
 
     /**
+     * Creates archive plot and displays in JFrame
+     */
+    @Override
+    public void createArchivePlot() {
+        this.model.fileWriter.close();
+        String fileContent = "";
+        File archive = new File("archive");
+        File[] listOfFiles = archive.listFiles();
+        if (listOfFiles.length != 0) {
+            File mostRecent = listOfFiles[0];
+            long mostRecentLong = Long.parseLong(mostRecent.getName().replace(
+                    ".txt", ""));
+            for (int i = 0; i < listOfFiles.length; i++) {
+                File challenger = listOfFiles[i];
+                long challengerLong = Long.parseLong(challenger.getName()
+                        .replace(".txt", ""));
+                if (challengerLong > mostRecentLong) {
+                    mostRecent = challenger;
+                }
+            }
+            SimpleReader fileIn = new SimpleReader1L("archive/"
+                    + mostRecent.getName());
+            fileContent += fileIn.nextLine() + "\n";
+            fileContent += fileIn.nextLine() + "\n";
+
+            ArrayList<ArrayList<Integer>> pastSeconds = new ArrayList<ArrayList<Integer>>();
+            while (!fileIn.atEOS()) {
+                ArrayList<Integer> count = new ArrayList<Integer>();
+                String line = fileIn.nextLine();
+                int arrayIndex = 0;
+                while (line.length() != 0) {
+                    int index = line.indexOf(" ");
+                    if (index >= 0) {
+                        count.add(Integer.parseInt(line.substring(0, index)));
+                        fileContent += line.substring(0, index) + " ";
+                        line = line.substring(index + 1);
+                        arrayIndex++;
+                    } else {
+                        count.add(Integer.parseInt(line));
+                        fileContent += line + "\n";
+                        line = "";
+                    }
+                }
+                pastSeconds.add(0, count);
+            }
+            Plot2DPanel plot = new Plot2DPanel();
+            int arraySize = pastSeconds.size();
+            plot.addLegend("EAST");
+            double[] x = new double[arraySize];
+            for (int i = 0; i < arraySize; i++) {
+                x[i] = i;
+            }
+            for (int i = 0; i < pastSeconds.get(0).size(); i++) {
+                double[] y = new double[arraySize];
+                for (int j = 0; j < pastSeconds.size(); j++) {
+                    y[j] = pastSeconds.get(j).get(i);
+                }
+                plot.addLinePlot(this.model.emotions.get(i), x, y);
+            }
+
+            JFrame archivePlot = new JFrame(
+                    "TwitterEmotionTracker: Archive Data");
+            archivePlot.setSize(1000, 800);
+            archivePlot.setContentPane(plot);
+            archivePlot.pack();
+            archivePlot.setVisible(true);
+
+            fileIn.close();
+            this.model.fileWriter = new SimpleWriter1L("archive/"
+                    + mostRecent.getName());
+            this.model.fileWriter.print(fileContent);
+        }
+    }
+
+    /**
      * actionPerformed method overridden to fire when the timer in TETMain fires
      * every second
      */
@@ -185,7 +268,8 @@ public final class TETController1 implements TETController {
         /*
          * Add record to archive file
          */
-        if (this.model.pastSeconds.size() != 0) {
+        if (this.model.pastSeconds.size() != 0
+                && this.model.fileWriter.isOpen()) {
             for (int i = 0; i < (this.model.pastSeconds.get(0).size() - 1); i++) {
                 this.model.fileWriter.print(this.model.pastSeconds.get(0)
                         .get(i) + " ");
