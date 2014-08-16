@@ -2,8 +2,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -40,6 +42,13 @@ public final class TETView1 extends JFrame implements TETView {
     private JPanel graphPanel;
 
     /**
+     * Menu items
+     */
+    private JMenuItem currentPastData;
+
+    private JMenuItem selectPastData;
+
+    /**
      * Application menu bar
      */
     private JMenuBar menuBar;
@@ -73,9 +82,12 @@ public final class TETView1 extends JFrame implements TETView {
          */
         this.menuBar = new JMenuBar();
         JMenu file = new JMenu("Archive");
-        JMenuItem item = new JMenuItem("Display all past data");
-        item.addActionListener(this);
-        file.add(item);
+        this.currentPastData = new JMenuItem("Display current past data");
+        this.selectPastData = new JMenuItem("Select past data to display");
+        this.currentPastData.addActionListener(this);
+        this.selectPastData.addActionListener(this);
+        file.add(this.currentPastData);
+        file.add(this.selectPastData);
         this.menuBar.add(file);
         this.setJMenuBar(this.menuBar);
 
@@ -231,7 +243,35 @@ public final class TETView1 extends JFrame implements TETView {
          */
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        this.controller.createArchivePlot();
+        if (event.getSource() == this.currentPastData) {
+            File archive = new File("archive");
+            File[] listOfFiles = archive.listFiles();
+            if (listOfFiles.length != 0) {
+                File mostRecent = listOfFiles[0];
+                long mostRecentLong = Long.parseLong(mostRecent.getName()
+                        .replace(".txt", ""));
+                for (int i = 0; i < listOfFiles.length; i++) {
+                    File challenger = listOfFiles[i];
+                    long challengerLong = Long.parseLong(challenger.getName()
+                            .replace(".txt", ""));
+                    if (challengerLong > mostRecentLong) {
+                        mostRecent = challenger;
+                    }
+                }
+                this.controller.createArchivePlot(mostRecent);
+            }
+        } else if (event.getSource() == this.selectPastData) {
+            FileDialog fd = new FileDialog(this,
+                    "Choose a file to display data from", FileDialog.LOAD);
+            fd.setDirectory("archive");
+            fd.setFile("*.txt");
+            fd.setVisible(true);
+            String fileName = fd.getFile();
+            if (fileName != null) {
+                this.controller.createArchivePlot(new File("archive/"
+                        + fileName));
+            }
+        }
 
         /*
          * Set the cursor back to normal

@@ -181,75 +181,60 @@ public final class TETController1 implements TETController {
      * Creates archive plot and displays in JFrame
      */
     @Override
-    public void createArchivePlot() {
+    public void createArchivePlot(File archiveFile) {
         this.model.fileWriter.close();
         String fileContent = "";
-        File archive = new File("archive");
-        File[] listOfFiles = archive.listFiles();
-        if (listOfFiles.length != 0) {
-            File mostRecent = listOfFiles[0];
-            long mostRecentLong = Long.parseLong(mostRecent.getName().replace(
-                    ".txt", ""));
-            for (int i = 0; i < listOfFiles.length; i++) {
-                File challenger = listOfFiles[i];
-                long challengerLong = Long.parseLong(challenger.getName()
-                        .replace(".txt", ""));
-                if (challengerLong > mostRecentLong) {
-                    mostRecent = challenger;
+
+        SimpleReader fileIn = new SimpleReader1L("archive/"
+                + archiveFile.getName());
+        fileContent += fileIn.nextLine() + "\n";
+        fileContent += fileIn.nextLine() + "\n";
+
+        ArrayList<ArrayList<Integer>> pastSeconds = new ArrayList<ArrayList<Integer>>();
+        while (!fileIn.atEOS()) {
+            ArrayList<Integer> count = new ArrayList<Integer>();
+            String line = fileIn.nextLine();
+            int arrayIndex = 0;
+            while (line.length() != 0) {
+                int index = line.indexOf(" ");
+                if (index >= 0) {
+                    count.add(Integer.parseInt(line.substring(0, index)));
+                    fileContent += line.substring(0, index) + " ";
+                    line = line.substring(index + 1);
+                    arrayIndex++;
+                } else {
+                    count.add(Integer.parseInt(line));
+                    fileContent += line + "\n";
+                    line = "";
                 }
             }
-            SimpleReader fileIn = new SimpleReader1L("archive/"
-                    + mostRecent.getName());
-            fileContent += fileIn.nextLine() + "\n";
-            fileContent += fileIn.nextLine() + "\n";
-
-            ArrayList<ArrayList<Integer>> pastSeconds = new ArrayList<ArrayList<Integer>>();
-            while (!fileIn.atEOS()) {
-                ArrayList<Integer> count = new ArrayList<Integer>();
-                String line = fileIn.nextLine();
-                int arrayIndex = 0;
-                while (line.length() != 0) {
-                    int index = line.indexOf(" ");
-                    if (index >= 0) {
-                        count.add(Integer.parseInt(line.substring(0, index)));
-                        fileContent += line.substring(0, index) + " ";
-                        line = line.substring(index + 1);
-                        arrayIndex++;
-                    } else {
-                        count.add(Integer.parseInt(line));
-                        fileContent += line + "\n";
-                        line = "";
-                    }
-                }
-                pastSeconds.add(0, count);
-            }
-            Plot2DPanel plot = new Plot2DPanel();
-            int arraySize = pastSeconds.size();
-            plot.addLegend("EAST");
-            double[] x = new double[arraySize];
-            for (int i = 0; i < arraySize; i++) {
-                x[i] = i;
-            }
-            for (int i = 0; i < pastSeconds.get(0).size(); i++) {
-                double[] y = new double[arraySize];
-                for (int j = 0; j < pastSeconds.size(); j++) {
-                    y[j] = pastSeconds.get(j).get(i);
-                }
-                plot.addLinePlot(this.model.emotions.get(i), x, y);
-            }
-
-            JFrame archivePlot = new JFrame(
-                    "TwitterEmotionTracker: Archive Data");
-            archivePlot.setSize(1000, 800);
-            archivePlot.setContentPane(plot);
-            archivePlot.pack();
-            archivePlot.setVisible(true);
-
-            fileIn.close();
-            this.model.fileWriter = new SimpleWriter1L("archive/"
-                    + mostRecent.getName());
-            this.model.fileWriter.print(fileContent);
+            pastSeconds.add(0, count);
         }
+        Plot2DPanel plot = new Plot2DPanel();
+        int arraySize = pastSeconds.size();
+        plot.addLegend("EAST");
+        double[] x = new double[arraySize];
+        for (int i = 0; i < arraySize; i++) {
+            x[i] = i;
+        }
+        for (int i = 0; i < pastSeconds.get(0).size(); i++) {
+            double[] y = new double[arraySize];
+            for (int j = 0; j < pastSeconds.size(); j++) {
+                y[j] = pastSeconds.get(j).get(i);
+            }
+            plot.addLinePlot(this.model.emotions.get(i), x, y);
+        }
+
+        JFrame archivePlot = new JFrame("TwitterEmotionTracker: Archive Data");
+        archivePlot.setSize(1000, 800);
+        archivePlot.setContentPane(plot);
+        archivePlot.pack();
+        archivePlot.setVisible(true);
+
+        fileIn.close();
+        this.model.fileWriter = new SimpleWriter1L("archive/"
+                + archiveFile.getName());
+        this.model.fileWriter.print(fileContent);
     }
 
     /**

@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Controller interface for multiple controllers to be implemented from.
@@ -23,7 +24,7 @@ public interface TETController extends ActionListener {
     /**
      * Creates archive plot and displays in JFrame
      */
-    void createArchivePlot();
+    void createArchivePlot(File archiveFile);
 
     /**
      * Override of actionPerformed() method from ActionListener interface
